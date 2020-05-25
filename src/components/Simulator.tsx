@@ -32,7 +32,7 @@ export const Simulator = () => {
         <Divider width="95%" />
         <Flex wrap="wrap" width="100%" direction="row" justify="space-around">
           <Text m={2}>Pristine Crystal(s) used: {state.crystalCount}</Text>
-          <Text m={2}>Restore Scroll(s) used: {state.restoreCount}</Text>
+          <Text m={2}>Restoration Scroll(s) used: {state.restoreCount}</Text>
         </Flex>
         <Divider width="95%" />
         <Button variantColor="teal" w="100%" mt={4} onClick={resetState}>
