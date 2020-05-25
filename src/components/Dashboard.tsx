@@ -17,7 +17,7 @@ export const Dashboard = () => {
           by{' '}
           <Link
             color="teal.500"
-            href="https://github.com/PeppaPigHS"
+            href="https://github.com/PeppaPigHS/awakening-enhancement"
             isExternal
           >
             @peppapighs
