@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Box } from '@chakra-ui/core'
 
-export const Card = ({ children, ...rest }) => {
+const Card = ({ children, ...rest }) => {
   return (
     <Box
       p={5}
@@ -17,3 +17,5 @@ export const Card = ({ children, ...rest }) => {
     </Box>
   )
 }
+
+export default Card
