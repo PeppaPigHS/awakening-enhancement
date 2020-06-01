@@ -6,10 +6,11 @@ import Card from './Card'
 import { displayLevel, useGlobalState, useGlobalDispatch } from './Context'
 import Enhance, { getSuccessRate } from './Enhance'
 import Configuration from './Configuration'
+import History from './History'
 
-export const Simulator = () => {
+const Simulator = () => {
   const state = useGlobalState()
-  const { dispatch } = useGlobalDispatch()
+  const dispatch = useGlobalDispatch()
 
   const resetState = () => {
     dispatch({
@@ -38,7 +39,10 @@ export const Simulator = () => {
         <Button variantColor="teal" w="100%" mt={4} onClick={resetState}>
           Reset
         </Button>
+        <History mt={4} />
       </Card>
     </Flex>
   )
 }
+
+export default Simulator

@@ -5,6 +5,8 @@ import Head from 'next/head'
 import { Global, css } from '@emotion/core'
 import { CSSReset, ThemeProvider, theme, DefaultTheme } from '@chakra-ui/core'
 
+import Context from '../components/Context'
+
 export default class CustomApp extends App {
   public render() {
     const { Component, pageProps } = this.props
@@ -34,7 +36,9 @@ export default class CustomApp extends App {
             }
           `}
         />
-        <Component {...pageProps} />
+        <Context>
+          <Component {...pageProps} />
+        </Context>
       </ThemeProvider>
     )
   }

@@ -1,4 +1,4 @@
-import React, { useReducer, useContext, useEffect, ReactHTML } from 'react'
+import React, { useReducer, useContext, useEffect } from 'react'
 
 export interface IState {
   level: number
@@ -8,11 +8,10 @@ export interface IState {
   crystalCount: number
   enhanceList: string[]
   selectedLevel: string
+  history: string[]
 }
 
-export interface IDispatch {
-  dispatch: React.Dispatch<StateAction>
-}
+const historyLimit: number = 5
 
 export const chance: number[] = [
   75,
@@ -49,10 +48,7 @@ const initialState: IState = {
   crystalCount: 0,
   enhanceList: displayLevel.slice(1, displayLevel.length),
   selectedLevel: null,
-}
-
-const initialDispatch: IDispatch = {
-  dispatch: null,
+  history: [],
 }
 
 type StateAction =
@@ -81,26 +77,17 @@ type StateAction =
       payload: number
     }
   | {
+      type: 'SET_HISTORY'
+      payload: string[]
+    }
+  | {
       type: 'RESET'
     }
-
-type DispatchAction = {
-  type: 'SET_DISPATCH'
-  payload: React.Dispatch<StateAction>
-}
 
 const reducerState = (state: IState, action: StateAction) => {
   switch (action.type) {
     case 'SET_STATE':
-      return Object.assign({}, state, {
-        level: action.payload.level,
-        valkType: action.payload.valkType,
-        useRestore: action.payload.useRestore,
-        restoreCount: action.payload.restoreCount,
-        crystalCount: action.payload.crystalCount,
-        enhanceList: action.payload.enhanceList,
-        selectedLevel: action.payload.selectedLevel,
-      })
+      return Object.assign({}, action.payload, {})
     case 'SET_LEVEL':
       return Object.assign({}, state, {
         level: action.payload,
@@ -121,19 +108,12 @@ const reducerState = (state: IState, action: StateAction) => {
       return Object.assign({}, state, {
         valkType: action.payload,
       })
+    case 'SET_HISTORY':
+      return Object.assign({}, state, {
+        history: [...action.payload],
+      })
     case 'RESET':
       return Object.assign({}, initialState, {})
-    default:
-      return state
-  }
-}
-
-const reducerDispatch = (state: IDispatch, action: DispatchAction) => {
-  switch (action.type) {
-    case 'SET_DISPATCH':
-      return Object.assign({}, state, {
-        dispatch: action.payload,
-      })
     default:
       return state
   }
@@ -143,25 +123,36 @@ const GlobalContext = React.createContext<IState>(initialState)
 
 export const useGlobalState = () => useContext(GlobalContext)
 
-const GlobalDispatch = React.createContext<IDispatch>(initialDispatch)
+const GlobalDispatch = React.createContext<React.Dispatch<StateAction>>(null)
 
 export const useGlobalDispatch = () => useContext(GlobalDispatch)
 
 const Context = ({ children }) => {
-  const [state, dispatchState] = useReducer<React.Reducer<IState, StateAction>>(
+  const [state, dispatch] = useReducer<React.Reducer<IState, StateAction>>(
     reducerState,
     initialState
   )
 
   useEffect(() => {
-    dispatchState({
+    dispatch({
       type: 'SET_ENHANCELIST',
       payload: displayLevel.slice(state.level + 1, displayLevel.length + 1),
     })
   }, [state.level])
 
+  useEffect(() => {
+    if (state.history.length > historyLimit)
+      dispatch({
+        type: 'SET_HISTORY',
+        payload: state.history.slice(
+          state.history.length - historyLimit,
+          state.history.length
+        ),
+      })
+  }, [state.history.length])
+
   return (
-    <GlobalDispatch.Provider value={{ dispatch: dispatchState }}>
+    <GlobalDispatch.Provider value={dispatch}>
       <GlobalContext.Provider value={state}>{children}</GlobalContext.Provider>
     </GlobalDispatch.Provider>
   )

@@ -17,7 +17,7 @@ const Option = ({ image, desc, children }) => {
 
 const Configuration = () => {
   const state = useGlobalState()
-  const { dispatch } = useGlobalDispatch()
+  const dispatch = useGlobalDispatch()
 
   const updateValkType = (value: boolean, valkType: number) => {
     dispatch({

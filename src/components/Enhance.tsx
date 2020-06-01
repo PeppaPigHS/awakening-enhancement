@@ -25,19 +25,46 @@ const getEnhance = (initialState: IState) => {
   ++currentState.crystalCount
   if (flipCoin(getSuccessRate(currentState.level, currentState.valkType))) {
     ++currentState.level
+    currentState.history = [
+      ...currentState.history,
+      'Successfully enhance: ' +
+        displayLevel[currentState.level - 1] +
+        ' → ' +
+        displayLevel[currentState.level],
+    ]
   } else {
+    let message: string = 'Fail to enhance: '
     if (currentState.useRestore) {
       currentState.restoreCount += 200
-      if (flipCoin(50)) return currentState
+      if (flipCoin(50)) {
+        currentState.history = [
+          ...currentState.history,
+          message + 'Successfully restore',
+        ]
+        return currentState
+      } else message += 'Fail to restore '
     }
-    if (currentState.level > 0) --currentState.level
+    if (currentState.level > 0) {
+      --currentState.level
+      currentState.history = [
+        ...currentState.history,
+        message +
+          displayLevel[currentState.level + 1] +
+          ' → ' +
+          displayLevel[currentState.level],
+      ]
+    } else
+      currentState.history = [
+        ...currentState.history,
+        message + displayLevel[currentState.level],
+      ]
   }
   return currentState
 }
 
 const Enhance = () => {
   const state = useGlobalState()
-  const { dispatch } = useGlobalDispatch()
+  const dispatch = useGlobalDispatch()
 
   const enhanceOnce = () => {
     dispatch({
