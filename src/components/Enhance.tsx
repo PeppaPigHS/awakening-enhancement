@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Button, Flex, Select, Text } from '@chakra-ui/core'
+import { Button, Flex, Select, Text, Switch } from '@chakra-ui/core'
 
 import {
   IState,
@@ -20,40 +20,43 @@ export const getSuccessRate = (level: number, valkType: number) => {
   return Math.min(100, chance[level] * valkRate[valkType])
 }
 
-const getEnhance = (initialState: IState) => {
+const getEnhance = (initialState: IState, storeHistory: boolean) => {
   let currentState: IState = Object.assign({}, initialState, {})
   ++currentState.crystalCount
   if (flipCoin(getSuccessRate(currentState.level, currentState.valkType))) {
     ++currentState.level
-    currentState.history = [
-      ...currentState.history,
-      'Successfully enhance: ' +
-        displayLevel[currentState.level - 1] +
-        ' → ' +
-        displayLevel[currentState.level],
-    ]
+    if (storeHistory)
+      currentState.history = [
+        ...currentState.history,
+        'Successfully enhance: ' +
+          displayLevel[currentState.level - 1] +
+          ' → ' +
+          displayLevel[currentState.level],
+      ]
   } else {
     let message: string = 'Fail to enhance: '
     if (currentState.useRestore) {
       currentState.restoreCount += 200
       if (flipCoin(50)) {
-        currentState.history = [
-          ...currentState.history,
-          message + 'Successfully restore',
-        ]
+        if (storeHistory)
+          currentState.history = [
+            ...currentState.history,
+            message + 'Successfully restore',
+          ]
         return currentState
       } else message += 'Fail to restore '
     }
     if (currentState.level > 0) {
       --currentState.level
-      currentState.history = [
-        ...currentState.history,
-        message +
-          displayLevel[currentState.level + 1] +
-          ' → ' +
-          displayLevel[currentState.level],
-      ]
-    } else
+      if (storeHistory)
+        currentState.history = [
+          ...currentState.history,
+          message +
+            displayLevel[currentState.level + 1] +
+            ' → ' +
+            displayLevel[currentState.level],
+        ]
+    } else if (storeHistory)
       currentState.history = [
         ...currentState.history,
         message + displayLevel[currentState.level],
@@ -69,7 +72,7 @@ const Enhance = () => {
   const enhanceOnce = () => {
     dispatch({
       type: 'SET_STATE',
-      payload: getEnhance(state),
+      payload: getEnhance(state, state.storeHistory),
     })
   }
 
@@ -78,7 +81,8 @@ const Enhance = () => {
 
     let currentState: IState = Object.assign({}, state, {})
     while (displayLevel[currentState.level] != currentState.selectedLevel)
-      currentState = Object.assign({}, getEnhance(currentState), {})
+      currentState = Object.assign({}, getEnhance(currentState, false), {})
+    currentState.history = []
     dispatch({
       type: 'SET_STATE',
       payload: currentState,
@@ -97,7 +101,7 @@ const Enhance = () => {
       <Button variantColor="teal" w="100%" mt={4} onClick={enhanceOnce}>
         Enhance
       </Button>
-      <Flex w="100%" mt={4} direction="row">
+      <Flex w="100%" mt={4} mb={2} direction="row">
         <Button
           mr={4}
           w={['100%', 1 / 2]}
@@ -115,7 +119,7 @@ const Enhance = () => {
           })}
         </Select>
       </Flex>
-      <Text color="red.500" mt={4}>
+      <Text color="red.500" mt={2}>
         Warning: Selecting Level IX or X might crash the website
       </Text>
     </React.Fragment>

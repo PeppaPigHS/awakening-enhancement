@@ -8,6 +8,7 @@ export interface IState {
   crystalCount: number
   enhanceList: string[]
   selectedLevel: string
+  storeHistory: boolean
   history: string[]
 }
 
@@ -48,6 +49,7 @@ const initialState: IState = {
   crystalCount: 0,
   enhanceList: displayLevel.slice(1, displayLevel.length),
   selectedLevel: null,
+  storeHistory: true,
   history: [],
 }
 
@@ -75,6 +77,10 @@ type StateAction =
   | {
       type: 'SET_VALKTYPE'
       payload: number
+    }
+  | {
+      type: 'SET_STOREHISTORY'
+      payload: boolean
     }
   | {
       type: 'SET_HISTORY'
@@ -107,6 +113,10 @@ const reducerState = (state: IState, action: StateAction) => {
     case 'SET_VALKTYPE':
       return Object.assign({}, state, {
         valkType: action.payload,
+      })
+    case 'SET_STOREHISTORY':
+      return Object.assign({}, state, {
+        storeHistory: action.payload,
       })
     case 'SET_HISTORY':
       return Object.assign({}, state, {
@@ -150,6 +160,14 @@ const Context = ({ children }) => {
         ),
       })
   }, [state.history.length])
+
+  useEffect(() => {
+    if (!state.storeHistory)
+      dispatch({
+        type: 'SET_HISTORY',
+        payload: [],
+      })
+  }, [state.storeHistory])
 
   return (
     <GlobalDispatch.Provider value={dispatch}>

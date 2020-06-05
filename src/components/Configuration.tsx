@@ -1,19 +1,9 @@
 import React from 'react'
 
-import { Flex, Text, Switch } from '@chakra-ui/core'
+import { Flex, Switch } from '@chakra-ui/core'
 import { useGlobalState, useGlobalDispatch } from './Context'
 
-const Option = ({ image, desc, children }) => {
-  return (
-    <Flex align="center" m={2} justify="space-between">
-      <img src={image} width="32px" height="32px" />
-      <Text ml={4} mr={4}>
-        {desc}
-      </Text>
-      {children}
-    </Flex>
-  )
-}
+import { Option } from './Utils'
 
 const Configuration = () => {
   const state = useGlobalState()

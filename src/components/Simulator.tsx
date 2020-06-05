@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { Flex, Text, Button, Divider } from '@chakra-ui/core'
-import Card from './Card'
+import { Card } from './Utils'
 
 import { displayLevel, useGlobalState, useGlobalDispatch } from './Context'
 import Enhance, { getSuccessRate } from './Enhance'
@@ -39,7 +39,7 @@ const Simulator = () => {
         <Button variantColor="teal" w="100%" mt={4} onClick={resetState}>
           Reset
         </Button>
-        <History mt={4} />
+        <History mt={2} />
       </Card>
     </Flex>
   )

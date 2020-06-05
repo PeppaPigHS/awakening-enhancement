@@ -1,11 +1,13 @@
 import React, { useCallback } from 'react'
 
-import { List, ListItem, ListIcon, Flex, Text } from '@chakra-ui/core'
+import { List, ListItem, ListIcon, Flex, Text, Switch } from '@chakra-ui/core'
+import { Option } from './Utils'
 
-import { useGlobalState } from './Context'
+import { useGlobalState, useGlobalDispatch } from './Context'
 
 const History = (props) => {
   const state = useGlobalState()
+  const dispatch = useGlobalDispatch()
 
   const HistoryList = useCallback(
     (props) => {
@@ -27,7 +29,25 @@ const History = (props) => {
     [state.history]
   )
 
-  return <HistoryList {...props} />
+  const updateStoreHistory = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch({
+      type: 'SET_STOREHISTORY',
+      payload: e.target.checked,
+    })
+  }
+
+  return (
+    <Flex direction="column" {...props}>
+      <Option image="" desc="Display Enhancement History">
+        <Switch
+          color="teal"
+          isChecked={state.storeHistory}
+          onChange={updateStoreHistory}
+        />
+      </Option>
+      <HistoryList mt={2} />
+    </Flex>
+  )
 }
 
 export default History
